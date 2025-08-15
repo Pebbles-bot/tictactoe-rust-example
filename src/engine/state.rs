@@ -46,15 +46,15 @@ pub fn check_winning(state: &mut Gamestate) -> i128 {
 
     for sum in prods.iter() {
         match sum {
-            // if any of the products are exactly 3^3=27, O must have won, return immediately
+            // if any of the products are exactly 3^3=27, X must have won, return immediately
             27 => { 
-                println!("Game Over! O wins!");
+                println!("Game Over! X wins!");
                 state.resolved = true;
                 return 1;
             },
-            // if any of the products are exactly 2^3, X must have won
+            // if any of the products are exactly 2^3, 0 must have won
             8 => {
-                println!("Game Over! X wins!");
+                println!("Game Over! 0 wins!");
                 state.resolved = true;
                 return 2;
             },
