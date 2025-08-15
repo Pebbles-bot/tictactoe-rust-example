@@ -16,7 +16,9 @@ use crate::render::render_cli;
 /// Simple program to greet a person
 
 
-fn main() {
+
+
+fn main() -> Result<(), Error> {
 
     // first initialize the gamestate
     let mut current_gamestate : state::Gamestate = state::Gamestate{
@@ -28,11 +30,16 @@ fn main() {
     };
 
 
-    let validator = |input_r: &usize| if *input_r > 2 {
-        Ok(Validation::Invalid("Only values up to 2 are allowed.".into()))
+    // its used for input checking
+    let validator = |input: &usize| if *input > 3 || *input < 1 {
+        Ok(Validation::Invalid("Only integers 1-3 are allowed.".into()))
     } else {
         Ok(Validation::Valid)
     };
+
+
+    // OriolFilter — 5:22 PM i would recommend first showing the empty minefield
+    render_cli::render_gamestate(&current_gamestate);
 
     /////////////////////////////
     // main turn loop begins here
@@ -57,11 +64,11 @@ fn main() {
                 match status {
                     (Ok(status_r), Ok(status_c)) => {
                         println!("Updating the gamestate...");
-                        state::place_x(status_r, status_c, &mut current_gamestate);
+                        state::place_x(status_r-1, status_c-1, &mut current_gamestate);
                         state::check_winning(&mut current_gamestate);
                     },
-                    (Err(err), .. ) => println!("Error while publishing your status: {}", err),
-                    ( .., Err(err)) => println!("Error while publishing your status: {}", err),
+                    (Err(err), .. ) => { println!("Error while publishing your status: {}", err); break; },
+                    ( .., Err(err)) => { println!("Error while publishing your status: {}", err); break; },
                 }
             },
             // its O's turn
@@ -80,22 +87,19 @@ fn main() {
                 match status {
                     (Ok(status_r), Ok(status_c)) => {
                         println!("Updating the gamestate...");
-                        state::place_o(status_r, status_c, &mut current_gamestate);
+                        state::place_o(status_r-1, status_c-1, &mut current_gamestate);
                         state::check_winning(&mut current_gamestate);
                     },
-                    (Err(err), .. ) => println!("Error while publishing your status: {}", err),
-                    ( .., Err(err)) => println!("Error while publishing your status: {}", err),
+                    (Err(err), .. ) => { println!("Error while publishing your status: {}", err); break; },
+                    ( .., Err(err)) => { println!("Error while publishing your status: {}", err); break; },
                 }
 
             },
         }
 
-        // rendering time TODO: dump this all in one dedicated function
-        println!("{} {} {}", render_cli::convert_to_xoxo(&current_gamestate.state_array_row_1[0]), render_cli::convert_to_xoxo(&current_gamestate.state_array_row_1[1]), render_cli::convert_to_xoxo(&current_gamestate.state_array_row_1[2]));
-        println!("{} {} {}", render_cli::convert_to_xoxo(&current_gamestate.state_array_row_2[0]), render_cli::convert_to_xoxo(&current_gamestate.state_array_row_2[1]), render_cli::convert_to_xoxo(&current_gamestate.state_array_row_2[2]));
-        println!("{} {} {}", render_cli::convert_to_xoxo(&current_gamestate.state_array_row_3[0]), render_cli::convert_to_xoxo(&current_gamestate.state_array_row_3[1]), render_cli::convert_to_xoxo(&current_gamestate.state_array_row_3[2]));
-
+        render_cli::render_gamestate(&current_gamestate);
     }
+    Ok(())
 }
 
 
