@@ -18,7 +18,7 @@ use crate::render::render_cli;
 
 
 
-fn main() -> Result<(), Error> {
+fn main() {
 
     // first initialize the gamestate
     let mut current_gamestate : state::Gamestate = state::Gamestate{
@@ -99,7 +99,6 @@ fn main() -> Result<(), Error> {
 
         render_cli::render_gamestate(&current_gamestate);
     }
-    Ok(())
 }
 
 
